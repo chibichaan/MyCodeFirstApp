@@ -52,7 +52,25 @@ namespace CodeFirstExample
                         
                         return true;
                     case "2": //редакт
-                        Console.Clear(); 
+                        Console.Clear();
+                        var inputPersonId = Guid.Parse(GetInputLine("Введите id человека, которого хотите редактировать"));
+                        
+                        var editingPersonId = db.Persons.FirstOrDefault(p => p.Id == inputPersonId);
+                        if (editingPersonId.Id != inputPersonId)
+                        {
+                            Console.WriteLine("Данного id не существует в базе данных");
+                        }
+                        
+                        var newNamePerson = GetInputLine("Введите новое имя человека");
+                        var newSurnamePerson = GetInputLine("Введите новую фамилию человека");
+
+                        var person2 = db.Persons.Find(inputPersonId);
+                        
+                        person2.Name = newNamePerson;
+                        person2.Surname = newSurnamePerson;
+                        
+                        db.Persons.Update(person2);
+                        db.SaveChanges();
                         
                         return true;
                     case "3": //удаление
