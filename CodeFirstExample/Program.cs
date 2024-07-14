@@ -38,16 +38,16 @@ namespace CodeFirstExample
                         var namePerson = GetInputLine("Введите имя человека");
                         var surnamePerson = GetInputLine("Введите фамилию человека");
                         
-                        var person1 = new Person(Guid.NewGuid(), namePerson, surnamePerson);
+                        var newPerson = new Person(Guid.NewGuid(), namePerson, surnamePerson);
 
                         var namePet = GetInputLine("Введите кничку животного");
                         var typeOfPet = GetInputLine("Введите тип животного");
 
-                        var pet1 = new Pet(Guid.NewGuid(), typeOfPet, namePet);
+                        var newPet = new Pet(Guid.NewGuid(), typeOfPet, namePet);
                         
-                        person1.Pets.Add(pet1);
+                        newPerson.Pets.Add(newPet);
                         
-                        db.Persons.Add(person1);
+                        db.Persons.Add(newPerson);
                         db.SaveChanges();
                         
                         return true;
@@ -55,34 +55,38 @@ namespace CodeFirstExample
                         Console.Clear();
                         var inputPersonId = Guid.Parse(GetInputLine("Введите id человека, которого хотите редактировать"));
                         
-                        var editingPersonId = db.Persons.FirstOrDefault(p => p.Id == inputPersonId);
-                        if (editingPersonId.Id != inputPersonId)
+                        var editingPerson = db.Persons.FirstOrDefault(p => p.Id == inputPersonId);
+                        
+                        if (editingPerson == null)
                         {
                             Console.WriteLine("Данного id не существует в базе данных");
+                            return true;
                         }
                         
                         var newNamePerson = GetInputLine("Введите новое имя человека");
                         var newSurnamePerson = GetInputLine("Введите новую фамилию человека");
-
-                        var person2 = db.Persons.Find(inputPersonId);
                         
-                        person2.Name = newNamePerson;
-                        person2.Surname = newSurnamePerson;
+                        editingPerson.Name = newNamePerson;
+                        editingPerson.Surname = newSurnamePerson;
                         
-                        db.Persons.Update(person2);
                         db.SaveChanges();
                         
                         return true;
                     case "3": //удаление
                         Console.Clear();
                         
-                        var idForDelete = Guid.Empty;
-                        if (Guid.TryParse(GetInputLine("Введите id человека, которого хотите удалить из базы данных"), out Guid result))
+                        if (Guid.TryParse(GetInputLine("Введите id человека, которого хотите удалить из базы данных"), out var idForDelete))
                         {
-                            idForDelete = result;
+                            var deletedCount = db.Persons.Where(p=>p.Id == idForDelete).ExecuteDelete();
+                            if (deletedCount == 0)
+                            {
+                                Console.WriteLine("Такого человека с id не существует");
+                            }
                         }
-                        
-                        db.Persons.Where(p=>p.Id == idForDelete).ExecuteDelete();
+                        else
+                        {
+                            Console.WriteLine("Неверный формат id");
+                        }
                             
                         return true;
                     case "4":
@@ -99,6 +103,7 @@ namespace CodeFirstExample
                             sb.AppendLine($"\n##### END {count+1} #####");
                             Console.WriteLine(sb.ToString());
                             sb.Clear();
+                            count++;
                         }
                         
                         return true;
