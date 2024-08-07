@@ -40,7 +40,7 @@ namespace CodeFirstExample
                         
                         var newPerson = new Person(Guid.NewGuid(), namePerson, surnamePerson);
 
-                        var namePet = GetInputLine("Введите кничку животного");
+                        var namePet = GetInputLine("Введите кличку животного");
                         var typeOfPet = GetInputLine("Введите тип животного");
 
                         var newPet = new Pet(Guid.NewGuid(), typeOfPet, namePet);
